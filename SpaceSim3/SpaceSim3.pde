@@ -1,5 +1,6 @@
 
 /*
+LOL this is on GITHUB now
 Programm zur 2D-Simulation von Objekten im Weltall (Anziehungskräfte und so)
  
  Massen in TeraGramm -> G = 6,6743*10^-2 statt *10^-11 (G prop. zu 1/m)
@@ -53,6 +54,8 @@ void draw() {
   textSize(14);
 
   info();
+  
+  userInterface();
 
   moveCam();
 
@@ -79,19 +82,17 @@ void draw() {
 //Zusatzinformationen (fps, Anzahl aktiver Objekte, Masse des ausgewählten Körpers etc.)
 void info() {
   fill(#001219);
-  text(frameRate, 20, 20);
-  text("Körper: "+numObjectsReal, 1190, 20);
-
-  //println(selectedBody);
   
-  if (!simActive) {
+
+  
+  if (!simActive) { //Simulation pausieren
     fill(#FA0303);
     textSize(30);
     text("Simulation Gestoppt", 520, 600);
     textSize(14);
   }
 
-  if (selectedBody > -1) {
+  if (selectedBody > -1) { //Ausgewählter Körper...
     text("Geschwindigkeit: "+body[selectedBody].velocity, 280, 700);
     text("Masse: "+body[selectedBody].mass, 20, 700);
     text("Radius: "+body[selectedBody].radius, 150, 700);
