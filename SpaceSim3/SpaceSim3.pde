@@ -52,8 +52,6 @@ void draw() {
   background(240);
   
   textSize(14);
-
-  info();
   
   userInterface();
 
@@ -80,28 +78,15 @@ void draw() {
 
 
 //Zusatzinformationen (fps, Anzahl aktiver Objekte, Masse des ausgewählten Körpers etc.)
-void info() {
+void Pinfo() {
   fill(#001219);
   
 
   
-  if (!simActive) { //Simulation pausieren
-    fill(#FA0303);
-    textSize(30);
-    text("Simulation Gestoppt", 520, 600);
-    textSize(14);
-  }
 
-  if (selectedBody > -1) { //Ausgewählter Körper...
-    text("Geschwindigkeit: "+body[selectedBody].velocity, 280, 700);
-    text("Masse: "+body[selectedBody].mass, 20, 700);
-    text("Radius: "+body[selectedBody].radius, 150, 700);
-  }
+  
 
-  if (rightPress) { //Dauer des Rechtsklicks zählen
-    simActive = false;
-    rightPressDuration++;
-  }
+  
 }
 
 //Gibt bei Eingabe von Fenster Koordinaten die äquivalenten im Koordinatensystem zurück
