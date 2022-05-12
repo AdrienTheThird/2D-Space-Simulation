@@ -116,13 +116,3 @@ void calcGravityE() {
   numObjects += addedObjects; //Objekte die durch Kollisionen dazugekommen sind zur gesammtzahl hinzufügen
   addedObjects = 0;
 }
-
-
-
-void addBody() {
-  float newMass = rightPressDuration;
-  float newRadius = rightPressDuration;
-  body[numObjects] = new CelBody(newX(mouseX), newY(mouseY), 0, 2, newRadius, newMass, numObjects);
-  numObjects++;
-  println("addBody");
-}

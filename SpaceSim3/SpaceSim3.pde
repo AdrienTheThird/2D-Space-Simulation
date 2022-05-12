@@ -23,12 +23,11 @@ int selectedBody = -1;
 
 Boolean simActive = true; //Simmulation start/stop
 
-int numObjects = 100; //aktuelle Anzahl der Objekte in der Simulation (eigentlich -1)
+int numObjects = 1000; //aktuelle Anzahl der Objekte in der Simulation (eigentlich -1)
 int numObjectsReal; //reelle Zahl der Objekte die angezeigt und berechnet wird (ohne die unsichtbaren Objekte)
 int addedObjects = 0; //anzahl der Objekte die durch aktuelle Kollision dazukommen
 
-Boolean rightPress = false; //True wenn rechte Maustaste gedrückt
-int rightPressDuration = 5; //Länge der Dauer des Klicks
+
 
 CelBody[] body = new CelBody[10000]; //Array für alle Körper
 //CelBody body2;
@@ -138,33 +137,5 @@ void mouseWheel(MouseEvent event) {
     camZoom *= 1.2;
   } else {
     camZoom *= 0.8;
-  }
-}
-
-//wenn Linksklick, neuer Körper
-void mousePressed() {
-  if (mouseButton == RIGHT && simActive) {
-    rightPress = true; //Dauer des Rechtsklicks anfangen zu zählen
-  }
-}
-
-void mouseReleased() {
-  if (mouseButton == RIGHT) {
-    rightPress = false; // Dauer des Rechtsklicks aufhören zu zählen
-    simActive = true;
-    addBody();
-    rightPressDuration = 5; //Dauer des Rechtsklicks zurücksetzen
-  }
-}
-
-
-void keyReleased() {
-  if (key == ' ') { //Simulation Pausieren
-    if (simActive) {
-      simActive = false;
-    } else {
-      simActive = true;
-    }
-    println("SPACE");
   }
 }
