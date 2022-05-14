@@ -23,13 +23,13 @@ int selectedBody = -1;
 
 Boolean simActive = true; //Simmulation start/stop
 
-int numObjects = 1000; //aktuelle Anzahl der Objekte in der Simulation (eigentlich -1)
+int numObjects = 300; //aktuelle Anzahl der Objekte in der Simulation (eigentlich -1)
 int numObjectsReal; //reelle Zahl der Objekte die angezeigt und berechnet wird (ohne die unsichtbaren Objekte)
 int addedObjects = 0; //anzahl der Objekte die durch aktuelle Kollision dazukommen
 
 
 
-CelBody[] body = new CelBody[10000]; //Array für alle Körper
+CelBody[] body = new CelBody[20000]; //Array für alle Körper
 //CelBody body2;
 //CelBody body3;
 
@@ -53,6 +53,7 @@ void draw() {
   textSize(14);
   
   userInterface();
+  newObjects();
 
   moveCam();
 

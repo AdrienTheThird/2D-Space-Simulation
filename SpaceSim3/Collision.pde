@@ -81,7 +81,7 @@ void type2Collision(int obj1, int obj2) {
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
 
       newVel.rotate(i*rotateVel);
-      println("pos1 "+newPos);
+      //println("pos1 "+newPos);
       PVector randomizePos = new PVector(newVel.x, newVel.y);
       randomizePos.normalize();
       randomizePos.mult(newRadius);
@@ -102,7 +102,7 @@ void type2Collision(int obj1, int obj2) {
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
 
       newVel.rotate(i*rotateVel);
-      println("pos1 "+newPos);
+      //println("pos1 "+newPos);
       PVector randomizePos = new PVector(newVel.x, newVel.y);
       randomizePos.normalize();
       randomizePos.mult(newRadius);
@@ -123,7 +123,7 @@ void type2Collision(int obj1, int obj2) {
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
 
       newVel.rotate(i*rotateVel);
-      println("pos1 "+newPos);
+      //println("pos1 "+newPos);
       PVector randomizePos = new PVector(newVel.x, newVel.y);
       randomizePos.normalize();
       randomizePos.mult(newRadius);
@@ -144,13 +144,4 @@ void type2Collision(int obj1, int obj2) {
     body[obj2].sel = false;
     selectedBody = -1;
   }
-}
-
-
-//Winkel um den die Geschwindigkeit eines neuen Fragmenst gedreht wird
-float rotateVel (int fragNum, int newRadius) {
-  float theta = 0;
-
-
-  return(theta);
 }

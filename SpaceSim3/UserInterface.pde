@@ -1,49 +1,14 @@
 
 
-PVector rightklickPos; //Position an der geklickt wurde
-
-Boolean rightPress = false; //True wenn rechte Maustaste gedrückt
-Boolean rightRelease = false; //True wenn rechte Maustaste losgelassen
-
-int rightPressDuration = 5; //Länge der Dauer des Klicks
-
-
 void userInterface() {
+
+  grid();
 
   info(); //some info (fps etc.)
   simPause(); //pause Simulation
   bodySelected(); //select object
 
   fill(#001219);
-
-
-  //proprietary, probably gone soon
-  if (rightPress) { //Dauer des Rechtsklicks zählen
-    simActive = false;
-
-    stroke(#001219);
-    strokeWeight(3);
-    line(rightklickPos.x, rightklickPos.y, mouseX, mouseY);
-    //println("rightklickPos "+rightklickPos);
-
-    noStroke();
-
-    rightPressDuration++;
-  }
-  
-  if (rightRelease) { //Dauer des Rechtsklicks zählen
-    simActive = false;
-
-    stroke(#FEFF2E);
-    strokeWeight(3);
-    line(rightklickPos.x, rightklickPos.y, mouseX, mouseY);
-    //println("rightklickPos "+rightklickPos);
-
-    noStroke();
-
-    rightPressDuration++;
-  }
-  
 }
 
 //additional information (fps, number active objects, selected objects mass etc.)
@@ -72,6 +37,68 @@ void simPause() {
   }
 }
 
+//make Background grid
+void grid() {
+  //println(camZoom);
+  stroke(#C6C4C4);
+  strokeWeight(1);
+  
+  if (camZoom < 4 && camZoom > 0.4) {
+    float startXGrid = camZoom * floor(camPosX / (50)) * (50);
+    float startYGrid = camZoom * floor(camPosY / (50)) * (50);
+    int loopStartX = round(16/camZoom);
+    int loopStartY = round(12/camZoom);
+    for (int i=-loopStartX; i<loopStartX; i+= 1) {
+
+      line(realX(i*50)-startXGrid, realY(-550/camZoom)-startYGrid, realX(i*50)-startXGrid, realY(600/camZoom)-startYGrid);
+    }
+    for (int i=-loopStartY; i<loopStartY; i+= 1) {
+
+      line(realX(-800/camZoom)-startXGrid, realY(i*50)-startYGrid, realX(850/camZoom)-startXGrid, realY(i*50)-startYGrid);
+    }
+  } else if (camZoom > 0.1 && camZoom < 4) {
+    float startXGrid = camZoom * floor(camPosX / (200)) * (200);
+    float startYGrid = camZoom * floor(camPosY / (200)) * (200);
+    int loopStartX = round(16/camZoom);
+    int loopStartY = round(12/camZoom);
+    for (int i=-loopStartX; i<loopStartX; i+= 1) {
+
+      line(realX(i*200)-startXGrid, realY(-550/camZoom)-startYGrid, realX(i*200)-startXGrid, realY(600/camZoom)-startYGrid);
+    }
+    for (int i=-loopStartY; i<loopStartY; i+= 1) {
+
+      line(realX(-800/camZoom)-startXGrid, realY(i*200)-startYGrid, realX(850/camZoom)-startXGrid, realY(i*200)-startYGrid);
+    }
+  } else if (camZoom > 0.02 && camZoom < 0.1) {
+    float startXGrid = camZoom * floor(camPosX / (800)) * (800);
+    float startYGrid = camZoom * floor(camPosY / (800)) * (800);
+    int loopStartX = round(16/camZoom);
+    int loopStartY = round(12/camZoom);
+    for (int i=-loopStartX; i<loopStartX; i+= 1) {
+
+      line(realX(i*800)-startXGrid, realY(-550/camZoom)-startYGrid, realX(i*800)-startXGrid, realY(600/camZoom)-startYGrid);
+    }
+    for (int i=-loopStartY; i<loopStartY; i+= 1) {
+
+      line(realX(-800/camZoom)-startXGrid, realY(i*800)-startYGrid, realX(850/camZoom)-startXGrid, realY(i*800)-startYGrid);
+    }
+  } else if (camZoom > 0.005 && camZoom < 0.02) {
+    float startXGrid = camZoom * floor(camPosX / (3200)) * (3200);
+    float startYGrid = camZoom * floor(camPosY / (3200)) * (3200);
+    int loopStartX = round(16/camZoom);
+    int loopStartY = round(12/camZoom);
+    for (int i=-loopStartX; i<loopStartX; i+= 1) {
+
+      line(realX(i*3200)-startXGrid, realY(-550/camZoom)-startYGrid, realX(i*3200)-startXGrid, realY(600/camZoom)-startYGrid);
+    }
+    for (int i=-loopStartY; i<loopStartY; i+= 1) {
+
+      line(realX(-800/camZoom)-startXGrid, realY(i*3200)-startYGrid, realX(850/camZoom)-startXGrid, realY(i*3200)-startYGrid);
+    }
+  }
+}
+
+
 
 
 //wenn Linksklick, neuer Körper
@@ -81,9 +108,9 @@ void mousePressed() {
       rightPress = true; //Dauer des Rechtsklicks anfangen zu zählen
       rightklickPos = new PVector(mouseX, mouseY); //rightklickPos aktualisieren
     } else if (rightRelease) { //wenn schon vorher gedrückt
-      addBody(10, rightklickPos.x, rightklickPos.y);
+      addBody();
       rightPressDuration = 5; //Dauer des Rechtsklicks zurücksetzen
-      
+      println("lol");
       //rightPress = false;
     }
   }
@@ -91,20 +118,17 @@ void mousePressed() {
 
 void mouseReleased() {
   if (mouseButton == RIGHT) {
-    if(rightPress && !rightRelease) {
-      
+    if (rightPress && !rightRelease) {
+
       rightPress = false; // Dauer des Rechtsklicks aufhören zu zählen
       rightRelease = true;
       //simActive = true;
-      
-    } else if(rightRelease) {
+    } else if (rightRelease) {
       rightRelease = false;
       simActive = true;
+      addBody();
+      println("lul");
     }
-    
-    
-    
-    
   }
 }
 

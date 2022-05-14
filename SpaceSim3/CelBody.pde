@@ -14,7 +14,7 @@ class CelBody {
   int collidable = 0; //Kann der Körper kollidieren? (kann kollidieren wenn < 1)
 
   //Konstruktor mit X-Position, Y-Position, Größe, Masse, Index
-  CelBody(float posX, float posY, float initVelX, float initVelY,  float r, float m, int i) {
+  CelBody(float posX, float posY, float initVelX, float initVelY, float r, float m, int i) {
     forceE = new PVector(0, 0);
     acceleration = new PVector(0, 0);
     velocity = new PVector(initVelX, initVelY); //startGeschwindigkeit übergeben
@@ -33,7 +33,7 @@ class CelBody {
       velocity.add(acceleration);
       location.add(velocity);
       forceE.mult(0);
-      
+
       if (collidable > 0) {
         collidable -= 1;
       }
@@ -77,8 +77,6 @@ class CelBody {
       }
 
       ellipse(location.x, location.y, 2*radius, 2*radius);
-
-      
     }
   }
 }
@@ -89,6 +87,9 @@ class CelBody {
 void calcGravityE() {
   numObjectsReal = 0;
   for (int i=0; i<numObjects; i++) {
+    if (body[i].vis) {
+      numObjectsReal += 1;
+    }
     for (int n=i+1; n<numObjects; n++) {
       if (body[i].vis && body[n].vis) { //wenn beide Körper vorhanden
 
@@ -109,10 +110,8 @@ void calcGravityE() {
         }
       }
     }
-    if (body[i].vis) {
-      numObjectsReal += 1;
-    }
   }
+
   numObjects += addedObjects; //Objekte die durch Kollisionen dazugekommen sind zur gesammtzahl hinzufügen
   addedObjects = 0;
 }
