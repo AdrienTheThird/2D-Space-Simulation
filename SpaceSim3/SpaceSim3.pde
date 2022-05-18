@@ -1,4 +1,6 @@
 
+//Test MultiThread
+
 /*
 LOL this is on GITHUB now
 Programm zur 2D-Simulation von Objekten im Weltall (Anziehungskräfte und so)
@@ -63,7 +65,7 @@ void draw() {
 
   if (simActive) {
 
-    calcGravityE();
+    gravity();
 
 
     for (int i=0; i<numObjects; i++) {

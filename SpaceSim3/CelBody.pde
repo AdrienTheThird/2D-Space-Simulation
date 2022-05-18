@@ -80,38 +80,3 @@ class CelBody {
     }
   }
 }
-
-
-
-//alle Gravitationskräfte die auf alle Objekte wirken berechnen
-void calcGravityE() {
-  numObjectsReal = 0;
-  for (int i=0; i<numObjects; i++) {
-    if (body[i].vis) {
-      numObjectsReal += 1;
-    }
-    for (int n=i+1; n<numObjects; n++) {
-      if (body[i].vis && body[n].vis) { //wenn beide Körper vorhanden
-
-        PVector forceTmp = new PVector(0, 0); //temporäre Kraft
-
-        forceTmp = PVector.sub(body[i].location, body[n].location); //Richtung der Kraft
-        float tmpMag = forceTmp.mag(); //Distanz zwischen den beiden Objekten
-
-        if (tmpMag > 2) {
-          forceTmp.setMag(6.6743*pow(10, -2) * (body[i].mass*body[n].mass) / sq(tmpMag) ); //Länge der Kraft
-          body[i].forceE.add(forceTmp.mult(-1)); //Kraft zur Gesammtkraft von Objekt1 hinzufügen
-          body[n].forceE.add(forceTmp.mult(-1)); //Kraft zur Gesanntkraft Objekt2 hinzufügen
-        }
-
-        //auf Kollision prüfen && body[i].collidable < 20 && body[n].collidable < 20
-        if (tmpMag < (body[i].radius + body[n].radius) ) {
-          collision(i, n);
-        }
-      }
-    }
-  }
-
-  numObjects += addedObjects; //Objekte die durch Kollisionen dazugekommen sind zur gesammtzahl hinzufügen
-  addedObjects = 0;
-}
