@@ -3,7 +3,7 @@
 LOL this is on GITHUB now
 Programm zur 2D-Simulation von Objekten im Weltall (Anziehungskräfte und so)
  
- Massen in TeraGramm -> G = 6,6743*10^-2 statt *10^-11 (G prop. zu 1/m)
+ G = 6,6743*10^-2 statt *10^-11 (Milliardenfache Geschwindigkeit)
  
  Malte Putzar, 27.03.2022
  */
@@ -13,10 +13,10 @@ float time = 0; //aktueller Zeitstand
 float timeStep = 60; //Geschwindigkeit der Simulation (60 ist Normalgeschwindigkeit bei 60fps)
 int timeSpeed = 1; //Anzahl der Berechnungen pro Frame
 
-int noColTime = 40; //Anzahl der Frames bevor ein Körper erneut kollidieren kann
+int noColTime = 20; //Anzahl der Frames bevor ein Körper erneut kollidieren kann
 
-int camPosX = 0; //Position des aktuellen Bildausschnitts
-int camPosY = 0;
+float camPosX = 0; //Position des aktuellen Bildausschnitts
+float camPosY = 0;
 float camZoom = 1;
 
 int selectedBody = -1;
@@ -36,6 +36,7 @@ CelBody[] body = new CelBody[20000]; //Array für alle Körper
 void setup() {
   background(240);
   size(1280, 720);
+  //smooth(4);
 
   for (int i=0; i<numObjects-1; i++) {
     int randomSize = int(abs(random(6, 20)));
@@ -51,6 +52,8 @@ void draw() {
   background(240);
   
   textSize(14);
+  
+  println("orbit: "+newOrbit);
   
   userInterface();
   newObjects();
@@ -128,6 +131,7 @@ void moveCam() {
   translate(camPosX, camPosY);
 
   if (mousePressed && (mouseButton == CENTER)) {
+    followActive = false;
     camPosX += (mouseX-pmouseX)*1/camZoom;
     camPosY += (mouseY-pmouseY)*1/camZoom;
   }

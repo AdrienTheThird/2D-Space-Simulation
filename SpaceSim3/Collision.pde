@@ -3,11 +3,10 @@
 
 //folgen der Kollision zwischen zwei Objekten berechnen
 void collision(int obj1, int obj2) {
-  //float velDifMag = PVector.sub(body[obj1].velocity, body[obj2].velocity).mag();
 
-  //Schauen welche Art von Kollision stattfindet  && body[obj1].collidable < 1 && body[obj2].collidable < 1
+  //Schauen welche Art von Kollision stattfindet  
   if (body[obj1].radius > body[obj2].radius) {
-    if (body[obj1].mass - body[obj2].mass < 2000 && body[obj2].radius > 3) { //wenn Massedifferenz "klein"
+    if (body[obj1].mass / body[obj2].mass < 6 && body[obj2].radius > 3) { //wenn Massedifferenz "klein"
       if (body[obj1].mass - body[obj2].mass < 10 && body[obj1].collidable > 2 && body[obj2].collidable > 2) {
       } else {
         type2Collision(obj1, obj2);
@@ -16,7 +15,7 @@ void collision(int obj1, int obj2) {
       inelasticCollision(obj1, obj2);
     }
   } else {
-    if (body[obj2].mass - body[obj1].mass < 2000 && body[obj1].radius > 3) {
+    if (body[obj2].mass / body[obj1].mass < 6 && body[obj1].radius > 3) {
       if (body[obj2].mass - body[obj1].mass < 10 && body[obj1].collidable > 2 && body[obj2].collidable > 2) {
       } else {
         type2Collision(obj2, obj1);
@@ -75,8 +74,9 @@ void type2Collision(int obj1, int obj2) {
     int fragNum = 2;
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
-      float newMass = (body[obj2].mass/fragNum)*random(0.8, 1.2); //Masse des neuen Fragments
-      float newRadius = (body[obj2].radius/fragNum)*random(0.8, 1.2); //Radius des neuen Fragments
+      float randomizer = randomGaussian();
+      float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
+      float newRadius = (body[obj2].radius/fragNum)*randomizer; //Radius des neuen Fragments
       PVector newPos = body[obj2].location; //Position des neuen Fragments
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
 
@@ -96,8 +96,9 @@ void type2Collision(int obj1, int obj2) {
     int fragNum = int(random(3, 5));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
-      float newMass = (body[obj2].mass/fragNum)*random(0.8, 1.2); //Masse des neuen Fragments
-      float newRadius = (body[obj2].radius/fragNum)*random(0.8, 1.2); //Radius des neuen Fragments
+      float randomizer = randomGaussian();
+      float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
+      float newRadius = (body[obj2].radius/fragNum)*randomizer; //Radius des neuen Fragments
       PVector newPos = body[obj2].location; //Position des neuen Fragments
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
 
@@ -117,8 +118,9 @@ void type2Collision(int obj1, int obj2) {
     int fragNum = int(random(6, 9));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
-      float newMass = (body[obj2].mass/fragNum)*random(0.8, 1.2); //Masse des neuen Fragments
-      float newRadius = (body[obj2].radius/fragNum)*random(0.8, 1.2); //Radius des neuen Fragments
+      float randomizer = randomGaussian();
+      float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
+      float newRadius = (body[obj2].radius/fragNum)*randomizer; //Radius des neuen Fragments
       PVector newPos = body[obj2].location; //Position des neuen Fragments
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
 
