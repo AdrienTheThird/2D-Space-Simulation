@@ -2,15 +2,17 @@
 //Test MultiThread
 
 /*
-LOL this is on GITHUB now
-Programm zur 2D-Simulation von Objekten im Weltall (Anziehungskräfte und so)
+This is on GITHUB now:
+https://github.com/AdrienTheThird/2D-Space-Simulation
+
+ Programm zur 2D-Simulation von Objekten im Weltall (Anziehungskräfte und so)
  
  G = 6,6743*10^-2 statt *10^-11 (Milliardenfache Geschwindigkeit)
  
  Malte Putzar, 27.03.2022
  */
 
-
+int globalTime = 10;
 float time = 0; //aktueller Zeitstand
 float timeStep = 60; //Geschwindigkeit der Simulation (60 ist Normalgeschwindigkeit bei 60fps)
 int timeSpeed = 1; //Anzahl der Berechnungen pro Frame
@@ -44,7 +46,6 @@ void setup() {
     int randomSize = int(abs(random(6, 20)));
     int randomMass = int( randomSize*random(1, 3));
     body[i] = new CelBody(100+i*10, 100+int(random(20, 2250)), random(-3, 3), random(-3, 3), randomSize, randomMass, i);
-    
   }
   body[numObjects-1] = new CelBody(100+6*80, 400, 0, 0, 60, 50000, numObjects-1);
 }
@@ -52,11 +53,11 @@ void setup() {
 
 void draw() {
   background(240);
-  
+
   textSize(14);
-  
-  println("orbit: "+newOrbit);
-  
+
+  //println("orbit: "+newOrbit);
+
   userInterface();
   newObjects();
 
@@ -65,13 +66,15 @@ void draw() {
 
   if (simActive) {
 
-    gravity();
+    for (int i=0; i<timeSpeed; i++) {
+      gravity();
 
 
-    for (int i=0; i<numObjects; i++) {
-      body[i].calcLocation();
-      body[i].select();
-      body[i].selected();
+      for (int n=0; n<numObjects; n++) {
+        body[n].calcLocation();
+        body[n].select();
+        body[n].selected();
+      }
     }
   } 
 
@@ -85,13 +88,6 @@ void draw() {
 //Zusatzinformationen (fps, Anzahl aktiver Objekte, Masse des ausgewählten Körpers etc.)
 void Pinfo() {
   fill(#001219);
-  
-
-  
-
-  
-
-  
 }
 
 //Gibt bei Eingabe von Fenster Koordinaten die äquivalenten im Koordinatensystem zurück

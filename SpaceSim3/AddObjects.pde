@@ -37,7 +37,6 @@ void normalNewObject() {
     strokeWeight(3);
     ellipse(rightklickPos.x, rightklickPos.y, newObjRadius*2, newObjRadius*2); //show new size
 
-    //println("NOTorbit");
     noStroke();
 
     rightPressDuration++;
@@ -70,17 +69,17 @@ void orbitNewObject() {
 
   if (rightPress) { //Rechtklick gedrückt halten für Radius/Masse
     simActive = false;
-    
-    /*PVector radiusVector = new PVector(mouseX-rightklickPos.x, mouseY-rightklickPos.y); //calc new size
-    newObjRadius = radiusVector.mag();
 
-    stroke(#001219);
-    strokeWeight(3);
-    ellipse(rightklickPos.x, rightklickPos.y, newObjRadius*2, newObjRadius*2); //show new size
-    */
+    /*PVector radiusVector = new PVector(mouseX-rightklickPos.x, mouseY-rightklickPos.y); //calc new size
+     newObjRadius = radiusVector.mag();
+     
+     stroke(#001219);
+     strokeWeight(3);
+     ellipse(rightklickPos.x, rightklickPos.y, newObjRadius*2, newObjRadius*2); //show new size
+     */
     //println("orbit");
     noStroke(); 
-    
+
     newOrbitSize = new PVector(mouseX-realX(body[selectedBody].location.x), mouseY-realY(body[selectedBody].location.y));
     newOrbitDist = newOrbitSize.mag() / camZoom;
     newOrbitPos = new PVector(mouseX, mouseY);
@@ -100,7 +99,7 @@ void orbitNewObject() {
   if (rightRelease) { //Rechtklick loslassen und ziehen für Geschwindigkeit
     simActive = false;
     //calc new velocity
-    
+
     newObjRadius = 10;
 
     stroke(#FEFF2E);
@@ -125,21 +124,36 @@ void orbitNewObject() {
 
 void addBody() {
   //adjust size and velocity to zoom
-  newObjVel.div(camZoom);
-  newObjVel.div(50);
-  newObjRadius /= camZoom;
-  
-  float newMass = newObjRadius;
-  
-  if (newOrbit) {
-    newObjVel = newOrbitSize;
-    //newObjVel.setMag(sqrt(body[selectedBody].mass+newMass * ));
+  if (!newOrbit) {
+    newObjVel.div(camZoom);
+    newObjVel.div(50);
+    newObjRadius /= camZoom;
   }
-  
-  
+
+  float newMass = newObjRadius;
+  //float newDist = abs(sqrt(sq(realX(newOrbitPos.x)-body[selectedBody].location.x) + sq(realX(newOrbitPos.y)-body[selectedBody].location.y)));
+
+  /*if (newOrbit) {
+   newObjVel = newOrbitSize;
+   newObjVel.rotate(PI/2);
+   newObjVel.setMag(sqrt((body[selectedBody].mass+newMass)*6.6743*pow(10, -2) / newDist));
+   }*/
+
+
   if (newObjRadius > 4) {
-    body[numObjects] = new CelBody(newX(rightklickPos.x), newY(rightklickPos.y), newObjVel.x, newObjVel.y, newObjRadius, newMass, numObjects);
+    if (!newOrbit) {
+      body[numObjects] = new CelBody(newX(rightklickPos.x), newY(rightklickPos.y), newObjVel.x, newObjVel.y, newObjRadius, newMass, numObjects);
+    } else {
+      float newDist = abs(sqrt(sq(realX(newOrbitPos.x)-body[selectedBody].location.x) + sq(realX(newOrbitPos.y)-body[selectedBody].location.y)));
+
+      newObjVel = newOrbitSize;
+      newObjVel.rotate(PI/2);
+      newObjVel.setMag(sqrt((body[selectedBody].mass+newMass)*6.6743*pow(10, -2) / newDist));
+      println("newOrbitVel: "+newObjVel);
+      body[numObjects] = new CelBody(newX(newOrbitPos.x), newY(newOrbitPos.y), newObjVel.x, newObjVel.y, newObjRadius, newMass, numObjects);
+    }
     numObjects++;
+
     println("addBody");
   }
 }

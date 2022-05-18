@@ -1,10 +1,11 @@
 
 
-Boolean followActive = true; //follow active object
+Boolean followActive = false; //follow active object
 Boolean showGrid = true;
 
 void userInterface() {
-
+  
+  time();
   grid();
 
   info(); //some info (fps etc.)
@@ -50,13 +51,48 @@ void simPause() {
   }
 }
 
-//make Background grid
+//changes the speed of time (number of calculations per frame)
+void time() {
+  timeSpeed = 1;
+  switch(globalTime) {
+    case 9:
+      timeStep = 10;
+    case 10:
+      timeSpeed = 1;
+      break;
+    case 11:
+      timeSpeed = 2;
+      break;
+    case 12:
+      timeSpeed = 4;
+      break;
+    case 13:
+      timeSpeed = 8;
+      break;
+    case 14:
+      timeSpeed = 16;
+      break;
+    case 15:
+      timeSpeed = 32;
+      break;
+    case 16:
+      timeSpeed = 64;
+      break;
+    case 17:
+      timeSpeed = 128;
+      break;
+  }
+  //println("timeSpeed: "+timeSpeed);
+}
+
+//draw Background grid
 void grid() {
   if (showGrid) {
     stroke(#C6C4C4);
     strokeWeight(1);
-
-    if (camZoom < 4 && camZoom > 0.4) {
+    
+    //different grid sizes
+    if (camZoom < 4 && camZoom > 0.4) { //grid size 1
       float startXGrid = camZoom * floor(camPosX / (50)) * (50);
       float startYGrid = camZoom * floor(camPosY / (50)) * (50);
       int loopStartX = round(16/camZoom);
@@ -69,7 +105,7 @@ void grid() {
 
         line(realX(-800/camZoom)-startXGrid, realY(i*50)-startYGrid, realX(850/camZoom)-startXGrid, realY(i*50)-startYGrid);
       }
-    } else if (camZoom > 0.1 && camZoom < 4) {
+    } else if (camZoom > 0.1 && camZoom < 4) { //grid size 2
       float startXGrid = camZoom * floor(camPosX / (200)) * (200);
       float startYGrid = camZoom * floor(camPosY / (200)) * (200);
       int loopStartX = round(16/camZoom);
@@ -82,7 +118,7 @@ void grid() {
 
         line(realX(-800/camZoom)-startXGrid, realY(i*200)-startYGrid, realX(850/camZoom)-startXGrid, realY(i*200)-startYGrid);
       }
-    } else if (camZoom > 0.02 && camZoom < 0.1) {
+    } else if (camZoom > 0.02 && camZoom < 0.1) { //grid size 3
       float startXGrid = camZoom * floor(camPosX / (800)) * (800);
       float startYGrid = camZoom * floor(camPosY / (800)) * (800);
       int loopStartX = round(16/camZoom);
@@ -95,7 +131,7 @@ void grid() {
 
         line(realX(-800/camZoom)-startXGrid, realY(i*800)-startYGrid, realX(850/camZoom)-startXGrid, realY(i*800)-startYGrid);
       }
-    } else if (camZoom > 0.005 && camZoom < 0.02) {
+    } else if (camZoom > 0.005 && camZoom < 0.02) { //grid size 4
       float startXGrid = camZoom * floor(camPosX / (3200)) * (3200);
       float startYGrid = camZoom * floor(camPosY / (3200)) * (3200);
       int loopStartX = round(16/camZoom);
@@ -130,7 +166,6 @@ void mousePressed() {
     } else if (rightRelease) { //wenn schon vorher gedrückt
       addBody();
       rightPressDuration = 5; //Dauer des Rechtsklicks zurücksetzen
-      println("lol");
       //rightPress = false;
     }
   }
@@ -147,7 +182,6 @@ void mouseReleased() {
       rightRelease = false;
       simActive = true;
       addBody();
-      println("lul");
     }
   }
 }
@@ -177,4 +211,14 @@ void keyReleased() {
       showGrid = true;
     }
   }
+  if (key == 'z' && globalTime < 17) {
+    globalTime++;
+  }
+  if (key == 't') {
+    globalTime = 10;
+  }
+  if (key == 'r' && globalTime > 10) {
+    globalTime--;
+  }
+  
 }
