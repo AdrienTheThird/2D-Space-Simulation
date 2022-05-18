@@ -3,18 +3,27 @@
 Boolean followActive = false; //follow active object
 Boolean showGrid = true;
 
-void userInterface() {
+//everything drawn before the planets
+void userInterface1() {
   
   time();
   grid();
-
-  info(); //some info (fps etc.)
-  simPause(); //pause Simulation
+  
+  //info(); //some info (fps etc.)
+  
   bodySelected(); //select object
   followObject(); //follow active object
 
   fill(#001219);
 }
+
+//everything drawn after the plantes
+void userInterface2() {
+  simPause(); //pause Simulation
+  info(); //some info (fps etc.)
+  fill(#001219);
+}
+
 
 //follow active object
 void followObject() {
@@ -45,8 +54,8 @@ void bodySelected() {
 void simPause() {
   if (!simActive) { //Simulation pausieren
     fill(#FA0303);
-    textSize(30);
-    text("Simulation Gestoppt", 520, 600);
+    textSize(20);
+    text("SIMULATION PAUSED", 553, 25);
     textSize(14);
   }
 }

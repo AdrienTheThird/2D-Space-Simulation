@@ -3,13 +3,22 @@
 
 /*
 This is on GITHUB now:
-https://github.com/AdrienTheThird/2D-Space-Simulation
-
+ https://github.com/AdrienTheThird/2D-Space-Simulation
+ 
  Programm zur 2D-Simulation von Objekten im Weltall (Anziehungskräfte und so)
  
  G = 6,6743*10^-2 statt *10^-11 (Milliardenfache Geschwindigkeit)
  
- Malte Putzar, 27.03.2022
+ Controlls:
+ - middle-mouse-button to move around
+ - mouse-wheel to zoom
+ - leftklick to select object
+ - rightklick-drag to spawn new objects
+ - SPACE to pause
+ - '0' to follow selected object
+ - '/' to show/hide background grid
+ - time: 'r' to slow down, 't' to reset, 'z' to speed up
+ 
  */
 
 int globalTime = 10;
@@ -48,20 +57,24 @@ void setup() {
     body[i] = new CelBody(100+i*10, 100+int(random(20, 2250)), random(-3, 3), random(-3, 3), randomSize, randomMass, i);
   }
   body[numObjects-1] = new CelBody(100+6*80, 400, 0, 0, 60, 50000, numObjects-1);
+
+ 
 }
 
 
 void draw() {
   background(240);
-
   textSize(14);
 
-  //println("orbit: "+newOrbit);
 
-  userInterface();
+  userInterface1();
   newObjects();
-
+  
+  
+  pushMatrix();
+  
   moveCam();
+
 
 
   if (simActive) {
@@ -76,13 +89,16 @@ void draw() {
         body[n].selected();
       }
     }
-  } 
+  }
 
   for (int i=0; i<numObjects; i++) {
     body[i].display();
   }
+  
+  popMatrix();
+  
+  userInterface2();
 }
-
 
 
 //Zusatzinformationen (fps, Anzahl aktiver Objekte, Masse des ausgewählten Körpers etc.)
@@ -134,6 +150,8 @@ void moveCam() {
     camPosY += (mouseY-pmouseY)*1/camZoom;
   }
 }
+
+
 //Zoomen der Kamera
 void mouseWheel(MouseEvent event) {
   if (event.getCount() < 0) {
