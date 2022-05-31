@@ -3,13 +3,15 @@
 Boolean followActive = false; //follow active object
 Boolean showGrid = true;
 
+//is the cursor over background/UI/etc.
+int cursorOver = 1; //1=background, 2=objectList
+
 //everything drawn before the planets
 void userInterface1() {
-  
   time();
   grid();
   
-  //info(); //some info (fps etc.)
+  checkCursorPos();
   
   bodySelected(); //select object
   followObject(); //follow active object
@@ -21,8 +23,44 @@ void userInterface1() {
 void userInterface2() {
   simPause(); //pause Simulation
   info(); //some info (fps etc.)
+  
+  backgroundUI();
+  
   fill(#001219);
 }
+
+void backgroundUI() {
+  fill(#FFFFFF);
+  stroke(#000000);
+  strokeWeight(2);
+  beginShape();
+  curveVertex(-5, -10);
+  curveVertex(-5, -5);
+  curveVertex(-5, 30);
+  curveVertex(20, 30);
+  
+  curveVertex(100, 10);
+  curveVertex(500, 10);
+  curveVertex(550, -5);
+  curveVertex(10, -5);
+  
+  endShape();
+}
+
+void checkCursorPos() {
+  cursorOver = 1;
+  if (mouseX < 0 || mouseX > 1280 || mouseY < 0 || mouseY > 720) {
+    cursorOver = 0;
+  }
+  
+  if (showList) {
+    if (mouseX > 1000) {
+      cursorOver = 2;
+    }
+  }
+  
+}
+
 
 
 //follow active object

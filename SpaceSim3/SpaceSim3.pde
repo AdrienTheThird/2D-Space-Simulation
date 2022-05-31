@@ -21,7 +21,6 @@ This is on GITHUB now:
  
  */
 
-import g4p_controls.*;
 
 int globalTime = 10;
 float time = 0; //aktueller Zeitstand
@@ -58,25 +57,19 @@ void setup() {
     body[i] = new CelBody(100+i*10, 100+int(random(20, 2250)), random(-3, 3), random(-3, 3), randomSize, randomMass, i);
   }
   body[numObjects-1] = new CelBody(100+6*80, 400, 0, 0, 60, 50000, numObjects-1);
-
- 
 }
 
 
 void draw() {
   background(240);
   textSize(14);
-  
-  
+
   userInterface1();
   newObjects();
-  
-  
+
   pushMatrix(); //creates new coordinate system for the objects
-  
+
   moveCam();
-
-
 
   if (simActive) {
 
@@ -95,10 +88,11 @@ void draw() {
   for (int i=0; i<numObjects; i++) {
     body[i].display();
   }
-  
+
   popMatrix(); //goes back to the "normal" coordinate system for UI elements
-  
+
   userInterface2();
+  userInformation();
 }
 
 
@@ -145,19 +139,23 @@ void moveCam() {
   scale(camZoom);
   translate(camPosX, camPosY);
 
-  if (mousePressed && (mouseButton == CENTER)) {
-    followActive = false;
-    camPosX += (mouseX-pmouseX)*1/camZoom;
-    camPosY += (mouseY-pmouseY)*1/camZoom;
+  if (cursorOver == 1) {
+    if (mousePressed && (mouseButton == CENTER)) {
+      followActive = false;
+      camPosX += (mouseX-pmouseX)*1/camZoom;
+      camPosY += (mouseY-pmouseY)*1/camZoom;
+    }
   }
 }
 
 
 //Zoomen der Kamera
 void mouseWheel(MouseEvent event) {
-  if (event.getCount() < 0) {
-    camZoom *= 1.2;
-  } else {
-    camZoom *= 0.8;
+  if (cursorOver == 1) {
+    if (event.getCount() < 0) {
+      camZoom *= 1.2;
+    } else {
+      camZoom *= 0.8;
+    }
   }
 }
