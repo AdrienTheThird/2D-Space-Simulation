@@ -44,6 +44,7 @@ void info() {
 
 void bodySelected() {
   if (selectedBody > -1) { //If an object is selected
+    body[selectedBody].sel = true;
     text("Geschwindigkeit: "+body[selectedBody].velocity, 280, 700);
     text("Masse: "+body[selectedBody].mass, 20, 700);
     text("Radius: "+body[selectedBody].radius, 150, 700);
@@ -196,7 +197,7 @@ void mouseReleased() {
 }
 
 
-//Pausieren
+
 void keyReleased() {
   if (key == ' ') { //pause simulation
     if (simActive) {
@@ -220,6 +221,7 @@ void keyReleased() {
       showGrid = true;
     }
   }
+  
   if (key == 'z' && globalTime < 17) {
     globalTime++;
   }
@@ -230,4 +232,10 @@ void keyReleased() {
     globalTime--;
   }
   
+  if (key == 'S') {
+    saveState();
+  }
+  if (key == 'L') {
+    loadState();
+  }
 }

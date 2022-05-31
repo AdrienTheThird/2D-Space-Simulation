@@ -4,22 +4,16 @@
 //folgen der Kollision zwischen zwei Objekten berechnen
 void collision(int obj1, int obj2) {
 
-  //Schauen welche Art von Kollision stattfindet  
+  //Schauen welche Art von Kollision stattfindet
   if (body[obj1].radius > body[obj2].radius) {
-    if (body[obj1].mass / body[obj2].mass < 6 && body[obj2].radius > 3) { //wenn Massedifferenz "klein"
-      if (body[obj1].mass - body[obj2].mass < 10 && body[obj1].collidable > 2 && body[obj2].collidable > 2) {
-      } else {
-        type2Collision(obj1, obj2);
-      }
+    if (body[obj1].mass / body[obj2].mass < 6 && body[obj2].radius > 6) { //wenn Massedifferenz "klein"
+      type2Collision(obj1, obj2);
     } else { //unelastische Kollision
       inelasticCollision(obj1, obj2);
     }
   } else {
-    if (body[obj2].mass / body[obj1].mass < 6 && body[obj1].radius > 3) {
-      if (body[obj2].mass - body[obj1].mass < 10 && body[obj1].collidable > 2 && body[obj2].collidable > 2) {
-      } else {
-        type2Collision(obj2, obj1);
-      }
+    if (body[obj2].mass / body[obj1].mass < 6 && body[obj1].radius > 6) {
+      type2Collision(obj2, obj1);
     } else {
       inelasticCollision(obj2, obj1);
     }
@@ -68,17 +62,22 @@ void type2Collision(int obj1, int obj2) {
   newVel1 = PVector.sub(body[obj1].velocity, PVector.mult(locSpacer1, (massSpacer1 * dotSpacer1/magSpacer1)) );
   newVel2 = PVector.sub(body[obj2].velocity, PVector.mult(locSpacer2, (massSpacer2 * dotSpacer2/magSpacer2)) );
 
-  
+
 
   if (velDifMag < 1) { //Aufprallgeschwindigkeit klein, nur wenige kleine Fragmente if (velDifMag < 1)
-    int fragNum = 2;
+    int fragNum = 4;
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
       float randomizer = randomGaussian();
       float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
-      float newRadius = (body[obj2].radius/fragNum)*randomizer; //Radius des neuen Fragments
+      float newSurface = ((PI * sq(body[obj2].radius)) / fragNum) * randomizer; //size of the new surface
+      float newRadius = sqrt(newSurface/PI); //new fragments radius
       PVector newPos = body[obj2].location; //Position des neuen Fragments
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
+
+      newRadius = checkRadius(newRadius);
+
+      println("C1 "+newRadius);
 
       newVel.rotate(i*rotateVel);
       //println("pos1 "+newPos);
@@ -89,18 +88,23 @@ void type2Collision(int obj1, int obj2) {
       newPos.add(randomizePos);
 
       body[numObjects+addedObjects] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, numObjects+addedObjects);
-      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)0
+      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
       addedObjects++;
     }
   } else if (velDifMag < 3) { //Aufprallgeschwindigkeit mäßig, einige Fragmente
-    int fragNum = int(random(3, 5));
+    int fragNum = int(random(5, 9));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
       float randomizer = randomGaussian();
       float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
-      float newRadius = (body[obj2].radius/fragNum)*randomizer; //Radius des neuen Fragments
+      float newSurface = ((PI * sq(body[obj2].radius)) / fragNum) * randomizer; //size of the new surface
+      float newRadius = sqrt(newSurface/PI); //new fragments radius
       PVector newPos = body[obj2].location; //Position des neuen Fragments
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
+
+      newRadius = checkRadius(newRadius);
+
+      println("C2 "+newRadius);
 
       newVel.rotate(i*rotateVel);
       //println("pos1 "+newPos);
@@ -111,18 +115,23 @@ void type2Collision(int obj1, int obj2) {
       newPos.add(randomizePos);
 
       body[numObjects+addedObjects] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, numObjects+addedObjects);
-      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)0
+      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
       addedObjects++;
     }
   } else { //Aufprallgeschwindigkeit groß, viele Fragmente
-    int fragNum = int(random(6, 9));
+    int fragNum = int(random(9, 15));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
       float randomizer = randomGaussian();
       float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
-      float newRadius = (body[obj2].radius/fragNum)*randomizer; //Radius des neuen Fragments
+      float newSurface = ((PI * sq(body[obj2].radius)) / fragNum) * randomizer; //size of the new surface
+      float newRadius = sqrt(newSurface/PI); //new fragments radius
       PVector newPos = body[obj2].location; //Position des neuen Fragments
       PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
+
+      newRadius = checkRadius(newRadius);
+
+      println("C3 "+newRadius);
 
       newVel.rotate(i*rotateVel);
       //println("pos1 "+newPos);
@@ -133,17 +142,26 @@ void type2Collision(int obj1, int obj2) {
       newPos.add(randomizePos);
 
       body[numObjects+addedObjects] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, numObjects+addedObjects);
-      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)0
+      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
       addedObjects++;
     }
-  } 
+  }
 
   body[obj1].velocity = newVel1;
 
   body[obj2].vis = false; //zweites (kleines) Objekt unsichtbar machen
-  
+
   if (obj2 == selectedBody) { //wenn Körper ausgewählt, Körper abwählen
     body[obj2].sel = false;
     selectedBody = -1;
   }
+}
+
+//checks if the new radius is too small
+float checkRadius(float radius) {
+  if (radius > 1) {
+  } else {
+    radius = 1;
+  }
+  return(radius);
 }
