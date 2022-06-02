@@ -12,7 +12,7 @@ class CelBody {
   boolean sel = false; //Ist der aktuelle Körper ausgewählt?
   boolean vis = true; //Sichtbarkeit/Existenz des Körpers (Soll der Körper berechnet & angezeigt werden)
   int collidable = 0; //Kann der Körper kollidieren? (kann kollidieren wenn < 1)
-  
+
   float temp = 0; //temperature of the object
   float material = 0; //material of the object
   float habitlvl = 0; //how habitable is the object (0=not, 4=earth, 8=max)
@@ -54,6 +54,11 @@ class CelBody {
             body[i].sel = false;
           }
           sel = true;
+          if (showHidden) { //go to selected body in list
+            listStart = index;
+          } else {
+            listStart = selectedBodyVisIndex;
+          }
         }
       }
     }

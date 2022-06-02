@@ -130,6 +130,14 @@ int realY(float y) {
   return(int(y));
 }
 
+//rounds a float to x decimals
+float roundX(float input, int x) {
+  input *= pow(10, x);
+  float output = int(input);
+  output /= pow(10, x);
+  return(output);
+}
+
 
 
 //Bewegung der Kamera
@@ -144,18 +152,6 @@ void moveCam() {
       followActive = false;
       camPosX += (mouseX-pmouseX)*1/camZoom;
       camPosY += (mouseY-pmouseY)*1/camZoom;
-    }
-  }
-}
-
-
-//Zoomen der Kamera
-void mouseWheel(MouseEvent event) {
-  if (cursorOver == 1) {
-    if (event.getCount() < 0) {
-      camZoom *= 1.2;
-    } else {
-      camZoom *= 0.8;
     }
   }
 }

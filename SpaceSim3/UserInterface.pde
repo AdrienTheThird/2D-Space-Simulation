@@ -13,7 +13,7 @@ void userInterface1() {
   
   checkCursorPos();
   
-  bodySelected(); //select object
+  
   followObject(); //follow active object
 
   fill(#001219);
@@ -21,10 +21,13 @@ void userInterface1() {
 
 //everything drawn after the plantes
 void userInterface2() {
+  
+  backgroundUI();
+  
   simPause(); //pause Simulation
   info(); //some info (fps etc.)
   
-  backgroundUI();
+  bodySelected(); //select object info
   
   fill(#001219);
 }
@@ -33,18 +36,31 @@ void backgroundUI() {
   fill(#FFFFFF);
   stroke(#000000);
   strokeWeight(2);
+  curveTightness(0.4);
+
   beginShape();
-  curveVertex(-5, -10);
-  curveVertex(-5, -5);
-  curveVertex(-5, 30);
-  curveVertex(20, 30);
-  
-  curveVertex(100, 10);
-  curveVertex(500, 10);
-  curveVertex(550, -5);
-  curveVertex(10, -5);
-  
+  curveVertex(1300, -20);
+  curveVertex(1300, -10);
+  curveVertex(1000, -10);
+  curveVertex(1000, 0);
+
+  curveVertex(1020, 380);
+
+  curveVertex(1300, 400);
+  curveVertex(1310, 400);
   endShape();
+
+  if (selectedBody > -1) {
+    beginShape();
+    curveVertex(-10, 730);
+    curveVertex(-15, 730);
+    curveVertex(-10, 695);
+    curveVertex(0, 695);
+    curveVertex(400, 695);
+    curveVertex(450, 720);
+    curveVertex(430, 750);
+    endShape();
+  }
 }
 
 void checkCursorPos() {
@@ -54,7 +70,7 @@ void checkCursorPos() {
   }
   
   if (showList) {
-    if (mouseX > 1000) {
+    if (mouseX > 1000 && mouseY < 400) {
       cursorOver = 2;
     }
   }
@@ -83,9 +99,9 @@ void info() {
 void bodySelected() {
   if (selectedBody > -1) { //If an object is selected
     body[selectedBody].sel = true;
-    text("Geschwindigkeit: "+body[selectedBody].velocity, 280, 700);
-    text("Masse: "+body[selectedBody].mass, 20, 700);
-    text("Radius: "+body[selectedBody].radius, 150, 700);
+    text("Velocity: "+roundX(body[selectedBody].velocity.mag(), 2), 300, 712);
+    text("Mass: "+roundX(body[selectedBody].mass, 2), 10, 712);
+    text("Radius: "+roundX(body[selectedBody].radius, 2), 150, 712);
   }
 }
 
@@ -197,7 +213,26 @@ void grid() {
 }
 
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//  INPUT
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void mouseWheel(MouseEvent event) {
+  if (cursorOver == 1) { //Zoom
+    if (event.getCount() < 0) {
+      camZoom *= 1.2;
+    } else {
+      camZoom *= 0.8;
+    }
+  }
+  if (cursorOver == 2) { //scroll through list
+    if (event.getCount() < 0) {
+      scrollObjectList(true);
+    } else {
+      scrollObjectList(false);
+    }
+  }
+}
 
 //wenn Linksklick, neuer Körper
 void mousePressed() {

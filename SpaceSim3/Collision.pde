@@ -92,7 +92,7 @@ void type2Collision(int obj1, int obj2) {
       addedObjects++;
     }
   } else if (velDifMag < 3) { //Aufprallgeschwindigkeit mäßig, einige Fragmente
-    int fragNum = int(random(5, 9));
+    int fragNum = int(random(5, 8));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
       float randomizer = randomGaussian();
@@ -119,7 +119,7 @@ void type2Collision(int obj1, int obj2) {
       addedObjects++;
     }
   } else { //Aufprallgeschwindigkeit groß, viele Fragmente
-    int fragNum = int(random(9, 15));
+    int fragNum = int(random(8, 13));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
       float randomizer = randomGaussian();
