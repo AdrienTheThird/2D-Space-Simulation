@@ -3,7 +3,6 @@
 
 //folgen der Kollision zwischen zwei Objekten berechnen
 void collision(int obj1, int obj2) {
-
   //Schauen welche Art von Kollision stattfindet
   if (body[obj1].radius > body[obj2].radius) {
     if (body[obj1].mass / body[obj2].mass < 6 && body[obj2].radius > 6) { //wenn Massedifferenz "klein"
@@ -37,7 +36,6 @@ void inelasticCollision(int obj1, int obj2) {
     body[obj2].sel = false;
     selectedBody = -1;
   }
-  //println("velF: "+body[obj1].velocity);
 }
 
 
@@ -68,82 +66,19 @@ void type2Collision(int obj1, int obj2) {
     int fragNum = 4;
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
-      float randomizer = randomGaussian();
-      float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
-      float newSurface = ((PI * sq(body[obj2].radius)) / fragNum) * randomizer; //size of the new surface
-      float newRadius = sqrt(newSurface/PI); //new fragments radius
-      PVector newPos = body[obj2].location; //Position des neuen Fragments
-      PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
-
-      newRadius = checkRadius(newRadius);
-
-      println("C1 "+newRadius);
-
-      newVel.rotate(i*rotateVel);
-      //println("pos1 "+newPos);
-      PVector randomizePos = new PVector(newVel.x, newVel.y);
-      randomizePos.normalize();
-      randomizePos.mult(newRadius);
-      randomizePos.rotate(i*rotateVel);
-      newPos.add(randomizePos);
-
-      body[numObjects+addedObjects] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, numObjects+addedObjects);
-      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
-      addedObjects++;
+      executeType2Collision(obj2, fragNum, newVel2, rotateVel, i);
     }
   } else if (velDifMag < 3) { //Aufprallgeschwindigkeit mäßig, einige Fragmente
     int fragNum = int(random(5, 8));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
-      float randomizer = randomGaussian();
-      float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
-      float newSurface = ((PI * sq(body[obj2].radius)) / fragNum) * randomizer; //size of the new surface
-      float newRadius = sqrt(newSurface/PI); //new fragments radius
-      PVector newPos = body[obj2].location; //Position des neuen Fragments
-      PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
-
-      newRadius = checkRadius(newRadius);
-
-      println("C2 "+newRadius);
-
-      newVel.rotate(i*rotateVel);
-      //println("pos1 "+newPos);
-      PVector randomizePos = new PVector(newVel.x, newVel.y);
-      randomizePos.normalize();
-      randomizePos.mult(newRadius);
-      randomizePos.rotate(i*rotateVel);
-      newPos.add(randomizePos);
-
-      body[numObjects+addedObjects] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, numObjects+addedObjects);
-      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
-      addedObjects++;
+      executeType2Collision(obj2, fragNum, newVel2, rotateVel, i);
     }
   } else { //Aufprallgeschwindigkeit groß, viele Fragmente
     int fragNum = int(random(8, 13));
     float rotateVel = PI / fragNum;
     for (int i=0; i<fragNum; i++) {
-      float randomizer = randomGaussian();
-      float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
-      float newSurface = ((PI * sq(body[obj2].radius)) / fragNum) * randomizer; //size of the new surface
-      float newRadius = sqrt(newSurface/PI); //new fragments radius
-      PVector newPos = body[obj2].location; //Position des neuen Fragments
-      PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
-
-      newRadius = checkRadius(newRadius);
-
-      println("C3 "+newRadius);
-
-      newVel.rotate(i*rotateVel);
-      //println("pos1 "+newPos);
-      PVector randomizePos = new PVector(newVel.x, newVel.y);
-      randomizePos.normalize();
-      randomizePos.mult(newRadius);
-      randomizePos.rotate(i*rotateVel);
-      newPos.add(randomizePos);
-
-      body[numObjects+addedObjects] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, numObjects+addedObjects);
-      body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
-      addedObjects++;
+      executeType2Collision(obj2, fragNum, newVel2, rotateVel, i);
     }
   }
 
@@ -157,11 +92,34 @@ void type2Collision(int obj1, int obj2) {
   }
 }
 
-//checks if the new radius is too small
-float checkRadius(float radius) {
-  if (radius > 1) {
+
+void executeType2Collision (int obj2, int fragNum, PVector newVel2, float rotateVel, int i) {
+  float randomizer = abs(randomGaussian());
+  float newMass = (body[obj2].mass/fragNum)*randomizer; //Masse des neuen Fragments
+  float newSurface = ((PI * sq(body[obj2].radius)) / fragNum) * randomizer; //size of the new surface
+  float newRadius = sqrt(newSurface/PI); //new fragments radius
+  PVector newPos = body[obj2].location; //Position des neuen Fragments
+  PVector newVel = PVector.div(newVel2, fragNum); //Geschwindigkeit des neuen Fragments
+
+  if (newRadius > 1) {
   } else {
-    radius = 1;
+    newRadius = 1;
   }
-  return(radius);
+
+  //rotate new fragment around object1 center (so that not all fragments spawn on the same spot)
+  newVel.rotate(i*rotateVel);
+  PVector randomizePos = new PVector(newVel.x, newVel.y);
+  randomizePos.normalize();
+  randomizePos.mult(newRadius);
+  randomizePos.rotate(i*rotateVel);
+  newPos.add(randomizePos);
+
+  if (numEmpty > fragNum) {
+    body[freeSlots[i]] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, freeSlots[i]);
+    body[freeSlots[i]].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
+  } else {
+    body[numObjects+addedObjects] = new CelBody(newPos.x, newPos.y, newVel.x, newVel.y, newRadius, newMass, numObjects+addedObjects);
+    body[numObjects+addedObjects].collidable = noColTime; //Körper kann erst wieder nach 20 Frames kollidieren (um doppelkollisionen etc. zu verhindern)
+    addedObjects++;
+  }
 }

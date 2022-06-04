@@ -6,8 +6,6 @@ Boolean rightPress = false; //True wenn rechte Maustaste gedrückt
 Boolean rightRelease = false; //True wenn rechte Maustaste losgelassen
 Boolean newOrbit = false; //True if new objekt is orbiting
 
-int rightPressDuration = 5; //Länge der Dauer des Klicks
-
 
 float newObjRadius; //Radius des neuen Objekts
 PVector newObjVel; //Geschwindigkeit des neuen Objekts
@@ -26,7 +24,6 @@ void newObjects() {
 
 //normal new object
 void normalNewObject() {
-
   if (rightPress) { //Rechtklick gedrückt halten für Radius/Masse
     simActive = false;
 
@@ -36,13 +33,10 @@ void normalNewObject() {
     stroke(#001219);
     strokeWeight(3);
     ellipse(rightklickPos.x, rightklickPos.y, newObjRadius*2, newObjRadius*2); //show new size
-
-    noStroke();
-
-    rightPressDuration++;
   }
   if (rightRelease) { //Rechtklick loslassen und ziehen für Geschwindigkeit
     simActive = false;
+
     //calc new velocity
     newObjVel = new PVector(mouseX-rightklickPos.x, mouseY-rightklickPos.y);
     float newObjVelMag = newObjVel.mag() / camZoom;
@@ -55,10 +49,6 @@ void normalNewObject() {
 
     fill(#8B8B8B);
     text(newObjVelMag, rightklickPos.x + newObjVel.x/1.9, rightklickPos.y + newObjVel.y/1.9); //show new velocity
-
-    noStroke();
-
-    rightPressDuration++;
   }
 }
 
@@ -78,7 +68,7 @@ void orbitNewObject() {
      ellipse(rightklickPos.x, rightklickPos.y, newObjRadius*2, newObjRadius*2); //show new size
      */
     //println("orbit");
-    noStroke(); 
+    //noStroke();
 
     newOrbitSize = new PVector(mouseX-realX(body[selectedBody].location.x), mouseY-realY(body[selectedBody].location.y));
     newOrbitDist = newOrbitSize.mag() / camZoom;
@@ -92,9 +82,8 @@ void orbitNewObject() {
     //fill(#8B8B8B);
     //text(newObjVelMag, rightklickPos.x + newObjVel.x/1.9, rightklickPos.y + newObjVel.y/1.9); //show new velocity
 
-    noStroke();
+    //noStroke();
 
-    rightPressDuration++;
   }
   if (rightRelease) { //Rechtklick loslassen und ziehen für Geschwindigkeit
     simActive = false;
@@ -111,9 +100,8 @@ void orbitNewObject() {
     //fill(#8B8B8B);
     //text(newObjVelMag, rightklickPos.x + newObjVel.x/1.9, rightklickPos.y + newObjVel.y/1.9); //show new velocity
 
-    noStroke();
+    //noStroke();
 
-    rightPressDuration++;
   }
 }
 

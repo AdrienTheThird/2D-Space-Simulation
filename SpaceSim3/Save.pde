@@ -3,7 +3,7 @@
 //saves current state to csv
 void saveState() {
   simActive = false;
-  
+
   //save table
   saveTable(listT, "saves/save1.csv");
   println("state saved!");
@@ -29,11 +29,10 @@ void loadState() {
       body[i].vis = false;
     }
   }
-  
+
   numObjects = loadT.getRowCount() - 1;
-  
+
   selectedBody = loadT.getInt(loadT.getRowCount()-1, "mass");
-  
 }
 
 
@@ -49,19 +48,24 @@ void createTable() {
   listT.addColumn("vis");
 
   //fill table
-  for (int i=0; i<numObjects; i++) {
-    TableRow objects = listT.addRow();
-    objects.setFloat("locationX", body[i].location.x);
-    objects.setFloat("locationY", body[i].location.y);
-    objects.setFloat("velocityX", body[i].velocity.x);
-    objects.setFloat("velocityY", body[i].velocity.y);
-    objects.setFloat("radius", body[i].radius);
-    objects.setFloat("mass", body[i].mass);
-    if (body[i].vis) {
-      objects.setInt("vis", 1);
-    } else {
-      objects.setInt("vis", 0);
+  try { //catches NullPointerExceptions that occur becaues of multithreading
+    for (int i=0; i<numObjects; i++) {
+      TableRow objects = listT.addRow();
+      objects.setFloat("locationX", body[i].location.x);
+      objects.setFloat("locationY", body[i].location.y);
+      objects.setFloat("velocityX", body[i].velocity.x);
+      objects.setFloat("velocityY", body[i].velocity.y);
+      objects.setFloat("radius", body[i].radius);
+      objects.setFloat("mass", body[i].mass);
+      if (body[i].vis) {
+        objects.setInt("vis", 1);
+      } else {
+        objects.setInt("vis", 0);
+      }
     }
+  }
+  catch (NullPointerException e) {
+    errors++;
   }
   //last row for camPos etc.
   TableRow info = listT.addRow();
@@ -69,5 +73,4 @@ void createTable() {
   info.setFloat("locationY", camPosY);
   info.setFloat("radius", camZoom);
   info.setInt("mass", selectedBody);
-  
 }

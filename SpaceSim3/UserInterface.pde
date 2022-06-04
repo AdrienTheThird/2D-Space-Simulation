@@ -6,14 +6,16 @@ Boolean showGrid = true;
 //is the cursor over background/UI/etc.
 int cursorOver = 1; //1=background, 2=objectList
 
+int errors = 0;
+
 //everything drawn before the planets
 void userInterface1() {
   time();
   grid();
-  
+
   checkCursorPos();
-  
-  
+
+
   followObject(); //follow active object
 
   fill(#001219);
@@ -21,14 +23,13 @@ void userInterface1() {
 
 //everything drawn after the plantes
 void userInterface2() {
-  
+
   backgroundUI();
-  
+
   simPause(); //pause Simulation
-  info(); //some info (fps etc.)
-  
+
   bodySelected(); //select object info
-  
+
   fill(#001219);
 }
 
@@ -38,19 +39,20 @@ void backgroundUI() {
   strokeWeight(2);
   curveTightness(0.4);
 
-  beginShape();
-  curveVertex(1300, -20);
-  curveVertex(1300, -10);
-  curveVertex(1000, -10);
-  curveVertex(1000, 0);
+  if (showList) { //list Background
+    beginShape();
+    curveVertex(1300, -20);
+    curveVertex(1300, -10);
+    curveVertex(1000, -10);
+    curveVertex(1000, 0);
 
-  curveVertex(1020, 380);
+    curveVertex(1020, 380);
 
-  curveVertex(1300, 400);
-  curveVertex(1310, 400);
-  endShape();
-
-  if (selectedBody > -1) {
+    curveVertex(1300, 400);
+    curveVertex(1310, 400);
+    endShape();
+  }
+  if (selectedBody > -1) { //info Background
     beginShape();
     curveVertex(-10, 730);
     curveVertex(-15, 730);
@@ -61,20 +63,23 @@ void backgroundUI() {
     curveVertex(430, 750);
     endShape();
   }
+
+  //show/hide list symbol
+  rect(1254, 4, 20, 20);
+  line(1258, 9, 1270, 9);
+  line(1258, 14, 1270, 14);
+  line(1258, 19, 1270, 19);
 }
 
 void checkCursorPos() {
   cursorOver = 1;
   if (mouseX < 0 || mouseX > 1280 || mouseY < 0 || mouseY > 720) {
-    cursorOver = 0;
+    cursorOver = 0; //cursor on Screen
+  } else if (mouseX > 1254 && mouseY < 24) {
+    cursorOver = 3; //cursor over list hide/show button
+  } else if (showList && mouseX > 1000 && mouseY < 400) {
+    cursorOver = 2; //cursor over list
   }
-  
-  if (showList) {
-    if (mouseX > 1000 && mouseY < 400) {
-      cursorOver = 2;
-    }
-  }
-  
 }
 
 
@@ -88,16 +93,9 @@ void followObject() {
 }
 
 
-//additional information (fps, number active objects, selected objects mass etc.)
-void info() {
-  fill(#001219);
-  text(frameRate, 20, 20);
-  text("Körper: "+numObjectsReal, 1190, 20);
-}
-
-
 void bodySelected() {
   if (selectedBody > -1) { //If an object is selected
+    fill(#001219);
     body[selectedBody].sel = true;
     text("Velocity: "+roundX(body[selectedBody].velocity.mag(), 2), 300, 712);
     text("Mass: "+roundX(body[selectedBody].mass, 2), 10, 712);
@@ -119,42 +117,44 @@ void simPause() {
 void time() {
   timeSpeed = 1;
   switch(globalTime) {
-    case 9:
-      timeStep = 10;
-    case 10:
-      timeSpeed = 1;
-      break;
-    case 11:
-      timeSpeed = 2;
-      break;
-    case 12:
-      timeSpeed = 4;
-      break;
-    case 13:
-      timeSpeed = 8;
-      break;
-    case 14:
-      timeSpeed = 16;
-      break;
-    case 15:
-      timeSpeed = 32;
-      break;
-    case 16:
-      timeSpeed = 64;
-      break;
-    case 17:
-      timeSpeed = 128;
-      break;
+  case 9:
+    timeStep = 10;
+    break;
+  case 10:
+    timeSpeed = 1;
+    break;
+  case 11:
+    timeSpeed = 2;
+    break;
+  case 12:
+    timeSpeed = 4;
+    break;
+  case 13:
+    timeSpeed = 8;
+    break;
+  case 14:
+    timeSpeed = 16;
+    break;
+  case 15:
+    timeSpeed = 32;
+    break;
+  case 16:
+    timeSpeed = 64;
+    break;
+  case 17:
+    timeSpeed = 128;
+    break;
   }
   //println("timeSpeed: "+timeSpeed);
 }
+
 
 //draw Background grid
 void grid() {
   if (showGrid) {
     stroke(#C6C4C4);
     strokeWeight(1);
-    
+
     //different grid sizes
     if (camZoom < 4 && camZoom > 0.4) { //grid size 1
       float startXGrid = camZoom * floor(camPosX / (50)) * (50);
@@ -219,9 +219,9 @@ void grid() {
 
 void mouseWheel(MouseEvent event) {
   if (cursorOver == 1) { //Zoom
-    if (event.getCount() < 0) {
+    if (event.getCount() < 0 && camZoom < 30) {
       camZoom *= 1.2;
-    } else {
+    } else if (event.getCount() > 0 && camZoom > 0.001) {
       camZoom *= 0.8;
     }
   }
@@ -248,8 +248,6 @@ void mousePressed() {
       rightklickPos = new PVector(mouseX, mouseY); //rightklickPos aktualisieren
     } else if (rightRelease) { //wenn schon vorher gedrückt
       addBody();
-      rightPressDuration = 5; //Dauer des Rechtsklicks zurücksetzen
-      //rightPress = false;
     }
   }
 }
@@ -257,7 +255,6 @@ void mousePressed() {
 void mouseReleased() {
   if (mouseButton == RIGHT) {
     if (rightPress && !rightRelease) {
-
       rightPress = false; // Dauer des Rechtsklicks aufhören zu zählen
       rightRelease = true;
       //simActive = true;
@@ -267,9 +264,19 @@ void mouseReleased() {
       addBody();
     }
   }
+
+  if (mouseButton == LEFT) {
+    if (cursorOver == 3) { //hide/show list
+      if (showList) {
+        showList = false;
+      } else {
+        showList = true;
+      }
+    }
+  }
+
+  selectList();
 }
-
-
 
 void keyReleased() {
   if (key == ' ') { //pause simulation
@@ -294,7 +301,21 @@ void keyReleased() {
       showGrid = true;
     }
   }
-  
+
+  //debugging
+  if (keyCode == 114) {
+    if (showDebugging) {
+      showDebugging = false;
+      if (!alwaysShowHidden) {
+        showHidden = false;
+      }
+    } else {
+      showDebugging = true;
+      showHidden = true;
+    }
+  }
+
+  //time speed
   if (key == 'z' && globalTime < 17) {
     globalTime++;
   }
@@ -304,11 +325,57 @@ void keyReleased() {
   if (key == 'r' && globalTime > 10) {
     globalTime--;
   }
-  
+
   if (key == 'S') {
     saveState();
   }
   if (key == 'L') {
     loadState();
+  }
+
+  //println(keyCode, key);
+}
+
+//check if object in list selected
+void selectList() {
+  if (mouseButton == LEFT && cursorOver == 2 && showList) {
+    if (mouseX > 1016 && mouseX < 1250) { //check x-coordinate
+      int startPos = 20;
+      int rowDist = 16;
+
+      for (int i=0; i<20; i++) { //for all list rows
+        if (mouseY > startPos+rowDist*i && mouseY < startPos+rowDist*i+rowDist) { //check y-coordinate
+          println("lul "+i);
+          for (int n=0; n<numObjects; n++) { //deselect all other objects
+            body[n].sel = false;
+          }
+          if (showHidden) { //use listStart or visObject[listStart]
+            if (listStart > 0) { //error catching
+              selectedBody = listStart+i; //select object
+              body[listStart+i].sel = true; //select object
+              camPosX = -body[listStart+i].location.x; //go to object
+              camPosY = -body[listStart+i].location.y;
+            } else {
+              selectedBody = i; //select object
+              body[listStart+i].sel = true; //select object
+              camPosX = -body[i].location.x; //go to object
+              camPosY = -body[i].location.y;
+            }
+          } else {
+            if (listStart > 0) { //error catching
+              selectedBody = visObjects[listStart+i]; //select object
+              body[visObjects[listStart+i]].sel = true; //select object
+              camPosX = -body[visObjects[listStart+i]].location.x; //go to object
+              camPosY = -body[visObjects[listStart+i]].location.y;
+            } else {
+              selectedBody = visObjects[i]; //select object
+              body[visObjects[i]].sel = true; //select object
+              camPosX = -body[visObjects[i]].location.x; //go to object
+              camPosY = -body[visObjects[i]].location.y;
+            }
+          }
+        }
+      }
+    }
   }
 }
