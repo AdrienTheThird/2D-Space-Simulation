@@ -1,6 +1,6 @@
 
 
-Boolean followActive = false; //follow active object
+Boolean followActive = true; //follow active object
 Boolean showGrid = true;
 
 //is the cursor over background/UI/etc.
@@ -29,6 +29,9 @@ void userInterface2() {
   simPause(); //pause Simulation
 
   bodySelected(); //select object info
+
+  saveSequence();
+  loadSequence();
 
   fill(#001219);
 }
@@ -72,13 +75,17 @@ void backgroundUI() {
 }
 
 void checkCursorPos() {
-  cursorOver = 1;
+  cursorOver = 1; //standard = cursor over window, not over anything else
   if (mouseX < 0 || mouseX > 1280 || mouseY < 0 || mouseY > 720) {
-    cursorOver = 0; //cursor on Screen
+    cursorOver = 0; //cursor not over window
   } else if (mouseX > 1254 && mouseY < 24) {
     cursorOver = 3; //cursor over list hide/show button
   } else if (showList && mouseX > 1000 && mouseY < 400) {
     cursorOver = 2; //cursor over list
+  } else if (loadSequenceActive && mouseX>500 && mouseX<780 && mouseY>200 && mouseY<500) {
+    cursorOver = 4; //cursor over savestate selection (loading)
+  } else if (saveSequenceActive && mouseX>500 && mouseX<780 && mouseY>200 && mouseY<500) {
+    cursorOver = 5; //cursor over savestate selection (saving)
   }
 }
 
@@ -264,7 +271,6 @@ void mouseReleased() {
       addBody();
     }
   }
-
   if (mouseButton == LEFT) {
     if (cursorOver == 3) { //hide/show list
       if (showList) {
@@ -274,78 +280,119 @@ void mouseReleased() {
       }
     }
   }
-
+  selectSave();
   selectList();
 }
 
 void keyReleased() {
-  if (key == ' ') { //pause simulation
-    if (simActive) {
-      simActive = false;
-    } else {
-      simActive = true;
-    }
-    println("SPACE");
-  }
-  if (key == '0') { //activate follow
-    if (followActive) {
-      followActive = false;
-    } else {
-      followActive = true;
-    }
-  }
-  if (key == '/') { //show grid
-    if (showGrid) {
-      showGrid = false;
-    } else {
-      showGrid = true;
-    }
-  }
-
-  //debugging
-  if (keyCode == 114) {
-    if (showDebugging) {
-      showDebugging = false;
-      if (!alwaysShowHidden) {
-        showHidden = false;
+  if (saveSequenceActive && saveSequenceStage == 1) {
+    recTyping();
+  } else {
+    if (key == ' ') { //pause simulation
+      if (simActive) {
+        simActive = false;
+      } else {
+        simActive = true;
       }
-    } else {
-      showDebugging = true;
-      showHidden = true;
+      println("SPACE");
     }
-  }
+    if (key == '0') { //activate follow
+      if (followActive) {
+        followActive = false;
+      } else {
+        followActive = true;
+      }
+    }
+    if (key == '/') { //show grid
+      if (showGrid) {
+        showGrid = false;
+      } else {
+        showGrid = true;
+      }
+    }
 
-  //time speed
-  if (key == 'z' && globalTime < 17) {
-    globalTime++;
-  }
-  if (key == 't') {
-    globalTime = 10;
-  }
-  if (key == 'r' && globalTime > 10) {
-    globalTime--;
-  }
+    //debugging
+    if (keyCode == 114) { //F3
+      if (showDebugging) {
+        showDebugging = false;
+        if (!alwaysShowHidden) {
+          showHidden = false;
+        }
+      } else {
+        showDebugging = true;
+        showHidden = true;
+      }
+    }
 
-  if (key == 'S') {
-    saveState();
-  }
-  if (key == 'L') {
-    loadState();
-  }
+    //time speed
+    if (key == 'z' && globalTime < 17) {
+      globalTime++;
+    }
+    if (key == 't') {
+      globalTime = 10;
+    }
+    if (key == 'r' && globalTime > 10) {
+      globalTime--;
+    }
 
-  //println(keyCode, key);
+    //save/load
+    if (key == 'S') {
+      saveSequenceActive = true;
+    }
+    if (key == 'L') {
+      loadSequenceActive = true;
+    }
+
+    //println(keyCode, key);
+  }
 }
 
-//check if object in list selected
+//select save to load / save to
+void selectSave() {
+  if (mouseButton == LEFT && cursorOver == 4 && selectingLoadState) { //select state to load
+    int startPosY = 208;
+    int rowDist = 28;
+
+    for (int i=0; i<numSaves; i++) { //for all displayed saves
+      if (mouseY>startPosY+rowDist*i && mouseY<startPosY+rowDist+rowDist*i) { //check yPos
+        println("loadSave "+i);
+        loadStateIndex = i;
+        selectingLoadState = false;
+      }
+    }
+  } else if (mouseButton == LEFT && cursorOver == 5 && saveSequenceStage > -1) { //select state to save to
+    int startPosY = 208;
+    int rowDist = 28;
+
+    for (int i=0; i<numSaves+1; i++) { //for all displayed saves
+      if (mouseY>startPosY+rowDist*i && mouseY<startPosY+rowDist+rowDist*i) { //check yPos
+        println("saveState "+i);
+        saveStateIndex = i;
+        saveSequenceStage = 1;
+        newSaveName = " ";
+      }
+    }
+  } else if (mouseButton == LEFT) { //cancel loading/saving
+    saveSequenceActive = false;
+
+    loadSequenceActive = false;
+    selectingLoadState = true;
+    loadSequenceStart = true;
+  }
+}
+
+
+
+//check if object in list gets selected (clicked)
 void selectList() {
-  if (mouseButton == LEFT && cursorOver == 2 && showList) {
+  if (mouseButton == LEFT && cursorOver == 2 && showList) { //if list shown and cursor over list
     if (mouseX > 1016 && mouseX < 1250) { //check x-coordinate
       int startPos = 20;
       int rowDist = 16;
 
       for (int i=0; i<20; i++) { //for all list rows
         if (mouseY > startPos+rowDist*i && mouseY < startPos+rowDist*i+rowDist) { //check y-coordinate
-          println("lul "+i);
+          println("SelectList "+i);
           for (int n=0; n<numObjects; n++) { //deselect all other objects
             body[n].sel = false;
           }

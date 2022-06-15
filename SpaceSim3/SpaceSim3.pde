@@ -1,13 +1,6 @@
 
-//Test MultiThread
-
 /*
-This is on GITHUB now:
- https://github.com/AdrienTheThird/2D-Space-Simulation
- 
- Programm zur 2D-Simulation von Objekten im Weltall (Anziehungskräfte und so)
- 
- G = 6,6743*10^-2 statt *10^-11 (Milliardenfache Geschwindigkeit)
+ gravitational constant G = 6,6743*10^-2 instead of *10^-11 (mass*10^9, speed*10^3 and space*10^-2)
  
  Controlls:
  - middle-mouse-button to move around
@@ -18,6 +11,8 @@ This is on GITHUB now:
  - '0' to follow selected object
  - '/' to show/hide background grid
  - time: 'r' to slow down, 't' to reset, 'z' to speed up
+ - shift-S to save
+ - shift-L to load
  
  */
 
@@ -25,6 +20,7 @@ This is on GITHUB now:
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int numThreads = 4; // only use 1, 2, 4 or 6 !!
 Boolean alwaysShowHidden = true; //always show all objects in list
+int startObjects = 300;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -42,16 +38,16 @@ int selectedBody = -1;
 
 Boolean simActive = true; //Simmulation start/stop
 
-int numObjects = 300; //aktuelle Anzahl der Objekte in der Simulation (eigentlich -1)
+int numObjects = startObjects; //aktuelle Anzahl der Objekte in der Simulation (eigentlich -1)
 int numVisObjects = 0; //reelle Zahl der Objekte die angezeigt und berechnet wird (ohne die unsichtbaren Objekte)
 int addedObjects = 0; //anzahl der Objekte die durch aktuelle Kollision dazukommen
 
 
 CelBody[] body = new CelBody[20000]; //Array für alle Körper
 
+PImage icon ;
 
 void setup() {
-
   if (numThreads < 1 || numThreads > 6) {
     exit();
   }
@@ -60,12 +56,21 @@ void setup() {
     showHidden = true;
   }
   
-
+  icon = loadImage("data/icon.jpg");
+  surface.setIcon(icon);
+  surface.setTitle("Space Simulation");
+  
   size(1280, 720);
+  
+  createRandomStart();
 
-  for (int i=0; i<numObjects-1; i++) {
+}
+
+//creates random objects and one very dense "sun" 
+void createRandomStart() {
+  for (int i=0; i<startObjects-1; i++) {
     int randomSize = int(abs(random(6, 20)));
-    int randomMass = int( randomSize*random(1, 3));
+    int randomMass = int( randomSize*random(5, 13));
     body[i] = new CelBody(100+i*10, 100+int(random(20, 2250)), random(-3, 3), random(-3, 3), randomSize, randomMass, i);
   }
   body[numObjects-1] = new CelBody(100+6*80, 400, 0, 0, 60, 50000, numObjects-1);

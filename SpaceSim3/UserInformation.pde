@@ -20,6 +20,7 @@ void userInformation() {
 }
 
 
+
 void objectList() {
   if (showList) {
     int startPosY = 34;
@@ -52,7 +53,7 @@ void objectList() {
             fill(#90e0ef);
             rect(startPosX, i*rowDist+startPosY-12, 230, rowDist);
           }
-          if (body[listStart+i].vis == false) {
+          if (body[listStart+i].vis == false) { //highlight invisible objects
             fill(#FF6A74);
             rect(startPosX, i*rowDist+startPosY-12, 230, rowDist);
           }
@@ -99,24 +100,24 @@ void objectList() {
 
 //make Array of all visible objects
 void visObjArray() {
-  if (!showHidden) {
-    numVisObjects = 0;
 
-    for (int i=0; i<numObjects; i++) { //for all objects
-      try { //catches ArrayOutOfBounds errors that occur because of multithreading
-        if (listT.getInt(i, "vis") == 1) { //only if object visible
-          visObjects[numVisObjects] = i; //add object to array
-          numVisObjects++;
-          if (i == selectedBody) {
-            selectedBodyVisIndex = numVisObjects - 1;
-          }
+  numVisObjects = 0;
+
+  for (int i=0; i<numObjects; i++) { //for all objects
+    try { //catches ArrayOutOfBounds errors that occur because of multithreading
+      if (listT.getInt(i, "vis") == 1) { //only if object visible
+        visObjects[numVisObjects] = i; //add object to array
+        numVisObjects++;
+        if (i == selectedBody) {
+          selectedBodyVisIndex = numVisObjects - 1;
         }
       }
-      catch (ArrayIndexOutOfBoundsException e) {
-        errors++;
-      }
+    }
+    catch (ArrayIndexOutOfBoundsException e) {
+      errors++;
     }
   }
+
   if (selectedBody == -1) {
     selectedBodyVisIndex = -1;
   }
@@ -158,9 +159,10 @@ void debuggingInformation() {
     text("framerate: " + roundX(frameRate, 1), startPosX+8, startPosY+16);
     text("finished threads: " + threadsFinishedDebug, startPosX+8, startPosY+30);
     text("errors: " + errors, startPosX+8, startPosY+44);
-    text("visible objects: " + numVisObjects, startPosX+8, startPosY+58);
+    text("visible objects: " + numVisObjects, startPosX+8, startPosY+58); //only updates when object list shown
     text("object-array entries: " + numObjects, startPosX+8, startPosY+72);
-    text("zoom: " + roundX(camZoom, 4), startPosX+8, startPosY+86);
-    text("empty slots: " + numEmpty, startPosX+8, startPosY+100);
+    text("empty slots: " + numEmpty, startPosX+8, startPosY+86);
+    text("zoom: " + roundX(camZoom, 4), startPosX+8, startPosY+100);
+    text("camPos: " + roundX(camPosX, 1) + " " + roundX(camPosY, 1), startPosX+8, startPosY+114);
   }
 }
