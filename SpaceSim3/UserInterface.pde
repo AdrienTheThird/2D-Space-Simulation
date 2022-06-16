@@ -10,11 +10,10 @@ int errors = 0;
 
 //everything drawn before the planets
 void userInterface1() {
-  time();
-  grid();
+  time(); //speed of time
+  grid(); //draw grid
 
-  checkCursorPos();
-
+  checkCursorPos(); //check over what the cursor currently is
 
   followObject(); //follow active object
 
@@ -24,7 +23,7 @@ void userInterface1() {
 //everything drawn after the plantes
 void userInterface2() {
 
-  backgroundUI();
+  backgroundUI(); //background for objekt-list, bottom left info
 
   simPause(); //pause Simulation
 
@@ -241,18 +240,12 @@ void mouseWheel(MouseEvent event) {
   }
 }
 
-//wenn Linksklick, neuer Körper
+//wenn Rechtsklick, neuer Körper
 void mousePressed() {
   if (mouseButton == RIGHT && simActive) { //wenn rechte Maustaste gedrückt
-    if (!rightPress && !rightRelease) { //wenn noch nicht vorher gedrück
-      //wenn Objekt angeklickt
-      if (selectedBody > -1 && ((mouseX>realX(body[selectedBody].location.x-body[selectedBody].radius)) && (mouseX<realX(body[selectedBody].location.x+body[selectedBody].radius)) ) && ( (mouseY>realY(body[selectedBody].location.y-body[selectedBody].radius)) && (mouseY<realY(body[selectedBody].location.y+body[selectedBody].radius)))) {
-        newOrbit = true;
-      } else {
-        newOrbit = false;
-      }
-      rightPress = true; //neues Objekt anfangen
-      rightklickPos = new PVector(mouseX, mouseY); //rightklickPos aktualisieren
+    if (newObjectSequence == -1) { //wenn noch nicht vorher gedrück
+      newObjectActive = true;
+      newObjectSequence = 0;
     } else if (rightRelease) { //wenn schon vorher gedrückt
       addBody();
     }
@@ -261,16 +254,14 @@ void mousePressed() {
 
 void mouseReleased() {
   if (mouseButton == RIGHT) {
-    if (rightPress && !rightRelease) {
-      rightPress = false; // Dauer des Rechtsklicks aufhören zu zählen
-      rightRelease = true;
-      //simActive = true;
-    } else if (rightRelease) {
-      rightRelease = false;
-      simActive = true;
-      addBody();
+    if (newObjectSequence == 1) {
+      
+      newObjectSequence = 2;
+    } else if (newObjectSequence == 2) {
+      newObjectSequence = 3;
     }
   }
+  
   if (mouseButton == LEFT) {
     if (cursorOver == 3) { //hide/show list
       if (showList) {
